@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { API_BASE_URL } from "@/lib/api";
 import { springSnappy } from "@/lib/animations";
 
 function GitHubIcon({ className }: { className?: string }) {
@@ -29,9 +30,7 @@ export function GitHubStar({ variant = "badge" }: GitHubStarProps) {
   const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/github/stars`
-    )
+    fetch(`${API_BASE_URL}/github/stars`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.stars != null) {
