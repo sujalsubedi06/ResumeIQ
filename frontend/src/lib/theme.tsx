@@ -29,7 +29,12 @@ const ThemeContext = createContext<ThemeContextValue>({
 // after hydration (see useHydrated below), so SSR output stays consistent
 // between server and client.
 function getInitialTheme(): Theme {
-  return "dark";
+  if (typeof window === "undefined") return "dark";
+  const stored = localStorage.getItem("resumeiq-theme") as Theme | null;
+  if (stored === "light" || stored === "dark") return stored;
+  return window.matchMedia("(prefers-color-scheme: light)").matches
+    ? "light"
+    : "dark";
 }
 
 // A subscribe function that never fires — the store value only changes once,
@@ -49,6 +54,24 @@ function useHydrated() {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme);
   const hydrated = useHydrated();
+
+  // Listen for OS theme changes when user hasn't explicitly set a preference
+  useEffect(() => {
+    if (!hydrated) return;
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: light)");
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only auto-switch if the user hasn't manually set a preference
+      const stored = localStorage.getItem("resumeiq-theme") as Theme | null;
+      if (!stored) {
+        setThemeState(e.matches ? "light" : "dark");
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [hydrated]);
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
