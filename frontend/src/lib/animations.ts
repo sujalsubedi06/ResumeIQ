@@ -151,3 +151,24 @@ export const scrollRevealScale = {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// HOVER INTERACTIONS
+// ═══════════════════════════════════════════════════════════════
+
+export const hoverLift = {
+  whileHover: { y: -6, transition: springSnappy },
+  whileTap: { scale: 0.97, transition: springSnappy },
+};
+
+export const hoverScale = {
+  whileHover: { scale: 1.03, transition: springSnappy },
+  whileTap: { scale: 0.97, transition: springSnappy },
+};
+
+export const hoverGlow = {
+  whileHover: {
+    boxShadow: "0 0 20px rgba(242, 242, 240, 0.05)",
+    transition: springNatural,
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════
