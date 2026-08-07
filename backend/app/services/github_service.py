@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 import httpx
 from cachetools import TTLCache
 
@@ -37,7 +35,6 @@ class GitHubService:
                 stars = int(data.get("stargazers_count", 0))
 
                 _stars_cache["stars"] = stars
-                _stars_cache["updated_at"] = datetime.now(timezone.utc)
 
                 return stars
 
