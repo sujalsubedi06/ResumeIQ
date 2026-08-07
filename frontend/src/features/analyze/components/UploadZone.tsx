@@ -124,18 +124,25 @@ export function UploadZone({ onAnalyze, disabled, error, onReset }: UploadZonePr
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      validateAndSetFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      validateAndSetFile(file);
     }
+    // Reset the input value so picking the *same* file again re-triggers change
+    e.target.value = "";
   };
 
   const validateAndSetFile = (file: File) => {
     const ext = file.name.split(".").pop()?.toLowerCase();
     if (ext !== "pdf" && ext !== "docx") {
+      // Clear any previously selected file so the UI doesn't show a stale
+      // selection alongside the error.
+      setSelectedFile(null);
       setFileError("Unsupported file format. Only PDF and DOCX files are supported.");
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
+      setSelectedFile(null);
       setFileError("File size exceeds 10 MB limit.");
       return;
     }
