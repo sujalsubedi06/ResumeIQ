@@ -76,6 +76,15 @@ export function Footer() {
           </div>
         </div>
 
+        <div className="mt-12 pt-8 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-[var(--text-muted)]">
+            ResumeIQ — Engineering-level resume analysis
+          </p>
+          <div className="flex items-center gap-4">
+            <GitHubStar variant="minimal" />
+            <p className="text-xs text-[var(--text-muted)] font-mono">v1.0.0</p>
+          </div>
+        </div>
       </div>
     </footer>
   );
