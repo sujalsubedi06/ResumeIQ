@@ -75,7 +75,7 @@ describe("MobileNavBar", () => {
     const ghTab = screen.getByText("GitHub").closest("a")!;
     expect(ghTab).toHaveAttribute(
       "href",
-      "https://github.com/sujalsubedi06/ResumeIQ"
+      "https://github.com/karlowsmorris"/ResumeIQ"
     );
     expect(ghTab).toHaveAttribute("target", "_blank");
     expect(ghTab).toHaveAttribute("rel", "noopener noreferrer");

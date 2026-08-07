@@ -250,7 +250,7 @@ export default function HomePage() {
                   </Link>
                   <div className="my-1 border-t border-[var(--border)]" />
                   <a
-                    href="https://github.com/sujalsubedi06/ResumeIQ"
+                    href="https://github.com/karlowsmorris"/ResumeIQ"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}

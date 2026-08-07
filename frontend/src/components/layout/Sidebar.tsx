@@ -36,7 +36,7 @@ const navItems = [
   { label: "Analyze", icon: FileText, href: "/analyze" },
   { label: "Documentation", icon: BookOpen, href: "/docs" },
   { label: "About", icon: Info, href: "/about" },
-  { label: "GitHub", icon: GithubIcon, href: "https://github.com/sujalsubedi06/ResumeIQ" },
+  { label: "GitHub", icon: GithubIcon, href: "https://github.com/karlowsmorris"/ResumeIQ" },
 ];
 
 interface SidebarProps {
@@ -189,7 +189,7 @@ const mobileTabs = [
   { label: "Analyze", icon: FileText, href: "/analyze" },
   { label: "Docs", icon: BookOpen, href: "/docs" },
   { label: "About", icon: Info, href: "/about" },
-  { label: "GitHub", icon: GithubIcon, href: "https://github.com/sujalsubedi06/ResumeIQ" },
+  { label: "GitHub", icon: GithubIcon, href: "https://github.com/karlowsmorris"/ResumeIQ" },
 ];
 
 export function MobileNavBar() {

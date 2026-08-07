@@ -43,7 +43,7 @@ export function GitHubStar({ variant = "badge" }: GitHubStarProps) {
   if (variant === "minimal") {
     return (
       <motion.a
-        href="https://github.com/sujalsubedi06/ResumeIQ"
+        href="https://github.com/karlowsmorris"/ResumeIQ"
         target="_blank"
         rel="noopener noreferrer"
         whileHover={{ scale: 1.1 }}
@@ -59,7 +59,7 @@ export function GitHubStar({ variant = "badge" }: GitHubStarProps) {
 
   return (
     <motion.a
-      href="https://github.com/sujalsubedi06/ResumeIQ"
+      href="https://github.com/karlowsmorris"/ResumeIQ"
       target="_blank"
       rel="noopener noreferrer"
       whileHover={{ scale: 1.03, y: -1 }}
