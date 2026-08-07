@@ -396,6 +396,80 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      {/* How It Works */}
+      <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] transition-colors">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center space-y-3 mb-16"
+          >
+            <h2 className="text-2xl font-semibold tracking-tight">
+              How it works
+            </h2>
+            <p className="text-[var(--text-muted)] max-w-lg mx-auto">
+              Three simple steps to understand your resume performance.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainerDramatic}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            {steps.map((step, index) => (
+              <motion.div
+                key={step.step}
+                variants={fadeUpItem}
+                className="text-center space-y-4 relative group"
+              >
+                {/* Connecting line between steps with hover glow */}
+                {index < steps.length - 1 && (
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.3 + index * 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute hidden md:block opacity-60 group-hover:opacity-100 transition-all duration-500"
+                    style={{
+                      left: 'calc(50% + 35px)',
+                      top: '28px',
+                      width: 'calc(100% - 70px)',
+                      height: '1px',
+                      background: 'linear-gradient(90deg, var(--border) 0%, var(--border) 100%)',
+                      transformOrigin: 'left center',
+                    }}
+                    whileHover={{
+                      height: '2px',
+                      background: 'linear-gradient(90deg, var(--text-muted) 0%, var(--text-secondary) 50%, var(--text-muted) 100%)',
+                      transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+                    }}
+                  />
+                )}
+
+                <motion.div
+                  whileHover={{ scale: 1.15, rotate: 5 }}
+                  transition={springBouncy}
+                  className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] font-mono text-sm font-semibold text-[var(--text-secondary)] relative transition-colors z-10"
+                >
+                  {step.step}
+                </motion.div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-[var(--text-muted)]">{step.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       
       {/* Footer */}
       <Footer />
