@@ -399,4 +399,31 @@ describe("DocsPage", () => {
     expect(scrollContainer).toHaveClass("flex-1");
   });
 
+  // ── Mobile Progress Row ──────────────────────────────────────────
+  // The slider + section dots are hidden below `sm`, so a compact progress
+  // row (position bar + current section label) is shown to mobile users.
+
+  it("shows a mobile-only progress row in the bottom bar", () => {
+    const { container } = render(<DocsPage />);
+    const row = container.querySelector('[data-testid="docs-mobile-progress"]');
+    expect(row).not.toBeNull();
+    expect(row).toHaveClass("sm:hidden");
+    // Shows the current position out of the total section count
+    expect(row!.textContent).toContain("1");
+    expect(row!.textContent).toContain("8");
+    // And the current section's label
+    expect(row!.textContent).toContain("Overview");
+  });
+
+  it("lets long endpoint paths wrap on small screens", async () => {
+    render(<DocsPage />);
+    // The API section (where endpoints are listed) is only rendered after navigating
+    clickSectionDot("API Reference");
+    await screen.findByRole("heading", { name: /error codes/i });
+
+    const endpoints = screen.getAllByText("/api/v1/analyze");
+    expect(endpoints.length).toBeGreaterThanOrEqual(1);
+    expect(endpoints.some((el) => el.classList.contains("break-all"))).toBe(true);
+  });
+
 });
