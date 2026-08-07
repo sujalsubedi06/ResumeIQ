@@ -62,6 +62,11 @@ export default async function RootLayout({
 }>) {
   // Nonce set by src/middleware.ts (production CSP). Next.js applies it to its
   // own inline scripts automatically; ours needs the attribute explicitly.
+  //
+  // NOTE: reading headers() here is what opts every route into dynamic server
+  // rendering (build output shows ƒ instead of ○). That is intentional — the
+  // nonce must be unique per request, so the HTML cannot be statically
+  // prerendered. Do not "optimize" this away or the CSP nonce breaks.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   return (

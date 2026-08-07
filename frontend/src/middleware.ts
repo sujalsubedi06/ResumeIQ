@@ -47,7 +47,16 @@ export function middleware(request: NextRequest) {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-  ].join("; ");
+  ];
+
+  // Only force HTTPS for subresources when the page itself is already HTTPS.
+  // Browsers treat http://localhost as a secure context, so adding this on
+  // plain-HTTP local testing would wrongly upgrade local API calls to https.
+  if (request.nextUrl.protocol === "https:") {
+    csp.push("upgrade-insecure-requests");
+  }
+
+  const policy = csp.join("; ");
 
   const requestHeaders = new Headers(request.headers);
   // x-nonce is what makes Next.js stamp its own inline scripts with the nonce.
@@ -55,7 +64,7 @@ export function middleware(request: NextRequest) {
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   // The policy itself must go on the response headers the browser actually sees.
-  response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("Content-Security-Policy", policy);
 
   return response;
 }
