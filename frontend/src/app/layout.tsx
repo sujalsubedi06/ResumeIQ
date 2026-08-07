@@ -64,6 +64,16 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        {/*
+          Set data-theme before first paint to avoid a flash of the wrong
+          theme (FOUC). Runs synchronously while the HTML is parsed, before
+          hydration. Mirrors getInitialTheme() in lib/theme.tsx.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem("resumeiq-theme");var t=s==="light"||s==="dark"?s:(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();`,
+          }}
+        />
         <ThemeProvider>
           <PageTransition>{children}</PageTransition>
         </ThemeProvider>
