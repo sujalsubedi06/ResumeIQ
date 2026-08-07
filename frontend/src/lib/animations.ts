@@ -172,3 +172,109 @@ export const hoverGlow = {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// PAGE TRANSITIONS
+// ═══════════════════════════════════════════════════════════════
+
+export const pageTransition: Variants = {
+  initial: { opacity: 0, y: 16 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SPECIAL EFFECTS
+// ═══════════════════════════════════════════════════════════════
+
+// Score counter animation
+export const countUp = {
+  initial: { opacity: 0, scale: 0.5 },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    transition: { type: "spring" as const, stiffness: 200, damping: 20 },
+  },
+};
+
+// Progress bar fill with dramatic easing
+export const progressFill = {
+  initial: { scaleX: 0 },
+  animate: (width: number) => ({
+    scaleX: width,
+    transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.3 },
+  }),
+};
+
+// Pipeline step reveal
+export const pipelineStep: Variants = {
+  hidden: { opacity: 0, x: -20, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: springNatural,
+  },
+  completed: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: springSnappy,
+  },
+};
+
+// Modal overlay
+export const modalOverlay = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.2 } },
+  exit: { opacity: 0, transition: { duration: 0.15 } },
+};
+
+// Modal content
+export const modalContent = {
+  initial: { opacity: 0, scale: 0.95, y: 10 },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { type: "spring" as const, stiffness: 400, damping: 30 },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    y: 10,
+    transition: { duration: 0.15 },
+  },
+};
+
+
+
+
+
+// Text character stagger variant
+export const charReveal: Variants = {
+  hidden: { y: "100%", opacity: 0 },
+  visible: (i: number) => ({
+    y: "0%",
+    opacity: 1,
+    transition: {
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1],
+      delay: i * 0.03,
+    },
+  }),
+};
+
+// Gradient orb floating animation
+export const orbFloat = (delay: number = 0) => ({
+  x: [0, 30, -20, 0],
+  y: [0, -40, 20, 0],
+  scale: [1, 1.1, 0.95, 1],
+  transition: {
+    duration: 20,
+    ease: [0.4, 0, 0.6, 1] as [number, number, number, number],
+    repeat: Infinity,
+    delay,
+  },
+});
