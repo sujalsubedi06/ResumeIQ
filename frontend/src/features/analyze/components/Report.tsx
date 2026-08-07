@@ -11,6 +11,7 @@ import { SectionAnalysis } from "./SectionAnalysis";
 import { SkillsAnalysis } from "./SkillsAnalysis";
 import { ExperienceReview } from "./ExperienceReview";
 import { RecommendationList } from "./RecommendationList";
+import { AnalyzeAnotherModal } from "./AnalyzeAnotherModal";
 import {
   staggerContainer,
   fadeUpItem,
@@ -29,6 +30,7 @@ interface ReportProps {
 }
 
 export function Report({ report, onReset, onAnalyzeNew }: ReportProps) {
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <>
@@ -100,6 +102,7 @@ export function Report({ report, onReset, onAnalyzeNew }: ReportProps) {
           <div className="w-full sm:w-auto flex items-center gap-3">
             <motion.button
               type="button"
+              onClick={() => setModalOpen(true)}
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
               transition={springSnappy}
@@ -112,6 +115,18 @@ export function Report({ report, onReset, onAnalyzeNew }: ReportProps) {
         </motion.div>
       </motion.div>
 
+      {/* Analyze Another Modal */}
+      <AnalyzeAnotherModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onAnalyze={(file, jobDesc) => {
+          setModalOpen(false);
+          onReset();
+          if (onAnalyzeNew) {
+            setTimeout(() => onAnalyzeNew(file, jobDesc), 200);
+          }
+        }}
+      />
     </>
   );
 }
