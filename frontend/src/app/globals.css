@@ -33,6 +33,7 @@
     --preview-border: #d4d4d4;
     --toggle-bg: #3f3f46;
     --toggle-active: #f2f2f0;
+    --toggle-icon: #09090b;
   }
 
     /* ═══ LIGHT THEME ═══ */
@@ -60,6 +61,7 @@
     --preview-border: #c8c8c8;
     --toggle-bg: #c8c8c8;
     --toggle-active: #171717;
+    --toggle-icon: #f2f2f0;
   }
 
   * {
