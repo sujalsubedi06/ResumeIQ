@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate, useInView } from "framer-motion";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 interface ScoreCardProps {
@@ -53,6 +53,32 @@ const ratingConfig = {
   },
 };
 
+function AnimatedCounter({ value }: { value: number }) {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (isInView) {
+      const controls = animate(count, value, {
+        duration: 1.5,
+        ease: [0.22, 1, 0.36, 1],
+      });
+      return controls.stop;
+    }
+  }, [isInView, value, count]);
+
+  useEffect(() => {
+    const unsubscribe = rounded.on("change", (v) => {
+      if (ref.current) ref.current.textContent = String(v);
+    });
+    return unsubscribe;
+  }, [rounded]);
+
+  return <span ref={ref}>0</span>;
+}
+
 export function ScoreCard({ score, rating, label = "ATS SCORE" }: ScoreCardProps) {
   const config = ratingConfig[rating];
   const Icon = config.icon;
@@ -97,7 +123,7 @@ export function ScoreCard({ score, rating, label = "ATS SCORE" }: ScoreCardProps
               transition={{ type: "spring" as const, stiffness: 200, damping: 20, delay: 0.1 }}
               className="text-5xl font-bold text-[var(--text-primary)]"
             >
-              {score}
+              <AnimatedCounter value={score} />
             </motion.span>
             <motion.span
               initial={{ opacity: 0 }}
