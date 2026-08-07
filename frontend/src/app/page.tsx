@@ -470,6 +470,67 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Features Grid */}
+      <section className="border-t border-[var(--border)] transition-colors">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center space-y-3 mb-16"
+          >
+            <h2 className="text-2xl font-semibold tracking-tight">
+              What we analyze
+            </h2>
+            <p className="text-[var(--text-muted)] max-w-lg mx-auto">
+              Six key areas evaluated to give you a comprehensive understanding
+              of your resume quality.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainerDramatic}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
+            {features.map((feature) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={feature.title}
+                  variants={fadeUpItem}
+                  whileHover={{ y: -6, transition: { type: "spring" as const, stiffness: 400, damping: 25 } }}
+                  className="group bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-6 hover:border-[var(--border-hover)] transition-colors relative overflow-hidden"
+                >
+                  {/* Subtle hover glow */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(600px_circle_at_var(--mouse-x)_var(--mouse-y),rgba(242,242,240,0.02),transparent_40%)]" />
+                  <div className="space-y-4 relative z-10">
+                    <motion.div
+                      whileHover={{ rotate: 8, scale: 1.15 }}
+                      transition={springBouncy}
+                      className="p-2.5 bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg inline-flex"
+                    >
+                      <Icon className="w-5 h-5 text-[var(--text-secondary)]" />
+                    </motion.div>
+                    <div className="space-y-2">
+                      <h3 className="text-base font-semibold text-[var(--text-primary)]">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-[var(--text-muted)] leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
       
       {/* Footer */}
       <Footer />
