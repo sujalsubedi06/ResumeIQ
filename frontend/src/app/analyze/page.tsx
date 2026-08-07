@@ -28,7 +28,11 @@ export default function AnalyzePage() {
       {/* Mobile Header - outside flex to allow sticky to work */}
       <MobileHeader onMenuOpen={() => setMobileOpen(true)} />
 
-      <div className="flex flex-col lg:flex-row lg:min-h-dvh">
+      {/* h-dvh gives the app shell a definite height so main's overflow-y-auto
+          becomes the real scroller (same fix as the docs page). Without it the
+          content-driven min-height chain grows with the content and the page
+          scrolls as a document instead of scrolling inside main. */}
+      <div className="flex flex-col lg:flex-row h-dvh">
         {/* Sidebar Navigation */}
         <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 

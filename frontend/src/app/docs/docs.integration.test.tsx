@@ -399,6 +399,16 @@ describe("DocsPage", () => {
     expect(scrollContainer).toHaveClass("flex-1");
   });
 
+  it("gives main a definite viewport height so the content area scrolls internally", () => {
+    // Regression: main used min-h-dvh (content-driven), so the flex-1 scroll
+    // container never got a bounded height and grew with its content instead
+    // of scrolling — the header progress bar and bottom nav scrolled away.
+    const { container } = render(<DocsPage />);
+    const main = container.querySelector("main")!;
+    expect(main).toHaveClass("h-dvh");
+    expect(main).toHaveClass("overflow-hidden");
+  });
+
   // ── Mobile Progress Row ──────────────────────────────────────────
   // The slider + section dots are hidden below `sm`, so a compact progress
   // row (position bar + current section label) is shown to mobile users.

@@ -16,8 +16,11 @@ interface ThemeToggleProps {
 
 // Sun and moon glyphs. Both are always rendered and crossfaded through CSS
 // opacity, so the toggle is never in an "empty / hidden icon" state — even
-// mid-switch or before hydration. Colors come from a CSS variable that follows
-// data-theme, so the correct glyph color is painted on first paint too.
+// mid-switch or before hydration. The glyphs use `currentColor` and inherit
+// their color from the parent: inside the knob they pick up --toggle-icon
+// (tuned for contrast against --toggle-active), while icon-only usage inherits
+// the button's text color so the icon is always visible against the page
+// background in BOTH themes.
 function SunIcon({
   size = 18,
   strokeWidth = 2,
@@ -39,7 +42,6 @@ function SunIcon({
       strokeLinejoin="round"
       className={`pointer-events-none ${className}`}
       aria-hidden="true"
-      style={{ color: "var(--toggle-icon)" }}
     >
       <circle cx="12" cy="12" r="5" />
       <g stroke="currentColor">
@@ -77,7 +79,6 @@ function MoonIcon({
       strokeLinejoin="round"
       className={`pointer-events-none ${className}`}
       aria-hidden="true"
-      style={{ color: "var(--toggle-icon)" }}
     >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
@@ -90,28 +91,42 @@ export function ThemeToggle({ compact = false, iconOnly = false, className = "" 
 
   if (iconOnly) {
     return (
-      <motion.button
-        type="button"
-        onClick={toggleTheme}
-        whileHover={{ scale: 1.1, rotate: 15 }}
-        whileTap={{ scale: 0.9, rotate: -15 }}
-        transition={springSnappy}
-        className={`relative flex items-center justify-center w-9 h-9 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors ${className}`}
-        aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
-      >
-        <SunIcon
-          size={18}
-          className={`absolute inset-0 m-auto transition-opacity duration-200 ${
-            isDark ? "opacity-100" : "opacity-0"
-          }`}
-        />
-        <MoonIcon
-          size={18}
-          className={`absolute inset-0 m-auto transition-opacity duration-200 ${
-            isDark ? "opacity-0" : "opacity-100"
-          }`}
-        />
-      </motion.button>
+      <div className="relative group">
+        <motion.button
+          type="button"
+          onClick={toggleTheme}
+          whileHover={{ scale: 1.1, rotate: 15 }}
+          whileTap={{ scale: 0.9, rotate: -15 }}
+          transition={springSnappy}
+          className={`relative flex items-center justify-center w-9 h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-hover)] active:bg-[var(--bg-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--text-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] transition-colors ${className}`}
+          aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+        >
+          <SunIcon
+            size={18}
+            className={`absolute inset-0 m-auto transition-opacity duration-200 ${
+              isDark ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          <MoonIcon
+            size={18}
+            className={`absolute inset-0 m-auto transition-opacity duration-200 ${
+              isDark ? "opacity-0" : "opacity-100"
+            }`}
+          />
+        </motion.button>
+
+        {/* Tooltip: mirrors the aria-label for sighted users. It sits below the
+            chip so the sticky nav's top edge never clips it, and as a sibling
+            of the button so the hover-rotate transform doesn't skew it. It's
+            hidden from the a11y tree because the button's aria-label already
+            announces the target theme. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute top-full left-1/2 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1 text-[10px] font-medium text-[var(--text-secondary)] opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+        >
+          Switch to {isDark ? "Light" : "Dark"} theme
+        </span>
+      </div>
     );
   }
 
@@ -160,6 +175,9 @@ export function ThemeToggle({ compact = false, iconOnly = false, className = "" 
             x: isDark ? knobTravel : 0,
           }}
           style={{
+            // --toggle-icon is tuned to contrast against the knob color
+            // (--toggle-active) in both themes.
+            color: "var(--toggle-icon)",
             backgroundColor: "var(--toggle-active)",
           }}
         >

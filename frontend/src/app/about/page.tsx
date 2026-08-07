@@ -71,16 +71,21 @@ export default function AboutPage() {
     <div className="min-h-dvh bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors">
       <MobileHeader onMenuOpen={() => setMobileOpen(true)} />
 
-      <div className="flex flex-col lg:flex-row lg:min-h-dvh">
+      {/* h-dvh gives the app shell a definite height so main's overflow-y-auto
+          becomes the real scroller (same fix as the docs page). The footer is
+          inside main so it scrolls with the content instead of creating a
+          second document-level scroll area below the fold. */}
+      <div className="flex flex-col lg:flex-row h-dvh">
         <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 
-        <main className="flex-1 p-4 pt-20 pb-[calc(5rem+env(safe-area-inset-bottom))] lg:p-12 lg:pt-12 lg:pb-12 overflow-y-auto">
-          <motion.div
-            initial="initial"
-            animate="animate"
-            variants={pageTransition}
-            className="max-w-4xl mx-auto space-y-16"
-          >
+        <main className="flex-1 overflow-y-auto">
+          <div className="px-4 pt-20 pb-8 lg:px-12 lg:pt-12 lg:pb-12">
+            <motion.div
+              initial="initial"
+              animate="animate"
+              variants={pageTransition}
+              className="max-w-4xl mx-auto space-y-16"
+            >
             {/* Header */}
             <div className="space-y-4">
               <motion.h1
@@ -279,10 +284,14 @@ export default function AboutPage() {
               </motion.div>
             </motion.div>
           </motion.div>
+          </div>
+
+          <Footer />
+
+          {/* Clear the fixed mobile tab bar so it never covers the footer */}
+          <div data-testid="about-mobile-spacer" className="h-[calc(4rem+env(safe-area-inset-bottom))] lg:hidden" aria-hidden="true" />
         </main>
       </div>
-
-      <Footer />
 
       {/* Mobile Bottom Nav */}
       <MobileNavBar />

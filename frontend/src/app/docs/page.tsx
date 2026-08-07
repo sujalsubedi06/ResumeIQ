@@ -850,8 +850,12 @@ export default function DocsPage() {
       <div className="flex flex-1">
         <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 
-        {/* pt-14 clears the fixed mobile header; pb clears the fixed bottom tab bar */}
-        <main className="flex-1 flex flex-col min-h-dvh lg:min-h-0 overflow-hidden pt-14 lg:pt-0 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
+        {/* pt-14 clears the fixed mobile header; pb clears the fixed bottom tab bar.
+            h-dvh gives <main> a definite height so the flex-1 content area below
+            becomes the real scroller — without it the content-driven min-height
+            chain makes the inner overflow-y-auto container grow with its content
+            and the docs header/bottom nav scroll away with the page. */}
+        <main className="flex-1 flex flex-col h-dvh overflow-hidden pt-14 lg:pt-0 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
           {/* ── Header with Progress Bar ── */}
           <div className="shrink-0 border-b border-[var(--border)] bg-[var(--bg-primary)] relative">
             {/* Animated progress bar */}
