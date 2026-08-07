@@ -183,3 +183,68 @@ export function MobileHeader({
   );
 }
 
+// ─── Mobile Bottom Tab Bar ────────────────────────────────────
+const mobileTabs = [
+  { label: "Analyze", icon: FileText, href: "/analyze" },
+  { label: "Docs", icon: BookOpen, href: "/docs" },
+  { label: "About", icon: Info, href: "/about" },
+  { label: "GitHub", icon: GithubIcon, href: "https://github.com/sujalsubedi06/ResumeIQ" },
+];
+
+export function MobileNavBar() {
+  const pathname = usePathname();
+
+  return (
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--bg-primary)]/95 backdrop-blur-lg select-none" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <div className="flex items-center justify-around h-16 px-2 touch-manipulation">
+        {mobileTabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive =
+            tab.href === "/analyze"
+              ? pathname === "/analyze"
+              : tab.href.startsWith("/")
+                ? pathname.startsWith(tab.href)
+                : false;
+          const isExternal = tab.href.startsWith("http");
+
+          if (isExternal) {
+            return (
+              <a
+                key={tab.label}
+                href={tab.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center gap-0.5 w-16 h-full rounded-lg transition-colors text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-[9px] font-medium">{tab.label}</span>
+              </a>
+            );
+          }
+
+          return (
+            <Link
+              key={tab.label}
+              href={tab.href}
+              className={`flex flex-col items-center justify-center gap-0.5 w-16 h-full rounded-lg transition-all duration-200 relative ${
+                isActive
+                  ? "text-[var(--text-primary)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+              }`}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="mobileTabIndicator"
+                  className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-[var(--text-primary)]"
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              )}
+              <Icon className="w-5 h-5" />
+              <span className="text-[9px] font-medium">{tab.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
