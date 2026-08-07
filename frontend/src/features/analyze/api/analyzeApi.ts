@@ -16,5 +16,10 @@ export async function analyzeResumeApi(file: File, jobDescription?: string): Pro
 
   const data = await response.json();
 
+  if (!response.ok || !data.success) {
+    const errorMsg = data?.error?.message || "Resume analysis failed. Please try again.";
+    throw new Error(errorMsg);
+  }
+
   return data.data as AnalysisReport;
 }
