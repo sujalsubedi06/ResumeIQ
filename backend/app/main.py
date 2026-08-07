@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.gzip import GZipMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
@@ -26,6 +27,9 @@ if cors_origins == ["*"]:
     logger.info("CORS: All origins allowed (development mode)")
 else:
     logger.info(f"CORS: Restricted to {cors_origins}")
+
+# GZip compression — shrink JSON analysis responses on the wire (≥1 KB)
+app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 # Custom Exception Handler
 @app.exception_handler(ResumeIQException)
