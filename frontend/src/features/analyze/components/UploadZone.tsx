@@ -247,7 +247,7 @@ export function UploadZone({ onAnalyze, disabled, error, onReset }: UploadZonePr
             scale: dragActive ? 1.01 : 1,
           }}
           transition={springSnappy}
-          className="relative border rounded-xl p-6 sm:p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[240px] transition-colors hover:border-[var(--text-muted)] overflow-hidden group"
+          className="relative border rounded-xl p-6 sm:p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[200px] sm:min-h-[240px] transition-colors hover:border-[var(--text-muted)] overflow-hidden group"
         >
           {/* Animated border glow */}
           <AnimatedBorder active={dragActive || false} />
@@ -439,7 +439,7 @@ export function UploadZone({ onAnalyze, disabled, error, onReset }: UploadZonePr
           whileHover={canSubmit ? { scale: 1.02, y: -1 } : undefined}
           whileTap={canSubmit ? { scale: 0.98 } : undefined}
           transition={springSnappy}
-          className={`relative flex items-center gap-2.5 px-6 py-3 rounded-xl font-medium text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--text-primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)] ${
+          className={`relative flex w-full sm:w-auto items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-medium text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--text-primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)] ${
             canSubmit
               ? "bg-[var(--text-primary)] text-[var(--bg-primary)] hover:opacity-90 cursor-pointer"
               : "bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-muted)] cursor-not-allowed"
