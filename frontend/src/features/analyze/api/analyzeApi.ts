@@ -1,25 +1,57 @@
+import { API_BASE_URL } from "@/lib/api";
 import { AnalysisReport } from "../types/analysis";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+// Analysis typically finishes in 5–10s; cap at 90s so a hung request can't
+// leave the user stuck in the processing state forever.
+const REQUEST_TIMEOUT_MS = 90_000;
 
-export async function analyzeResumeApi(file: File, jobDescription?: string): Promise<AnalysisReport> {
+export async function analyzeResumeApi(
+  file: File,
+  jobDescription?: string
+): Promise<AnalysisReport> {
   const formData = new FormData();
   formData.append("resume", file);
   if (jobDescription && jobDescription.trim()) {
     formData.append("job_description", jobDescription.trim());
   }
 
-  const response = await fetch(`${API_BASE_URL}/analyze`, {
-    method: "POST",
-    body: formData,
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-  const data = await response.json();
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/analyze`, {
+      method: "POST",
+      body: formData,
+      signal: controller.signal,
+    });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new Error("Analysis timed out. Please try again.");
+    }
+    throw new Error(
+      "Could not reach the analysis server. Please check your connection and try again."
+    );
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
-  if (!response.ok || !data.success) {
-    const errorMsg = data?.error?.message || "Resume analysis failed. Please try again.";
+  let data: unknown = null;
+  try {
+    data = await response.json();
+  } catch {
+    // e.g. an HTML error page from a proxy/gateway instead of JSON
+    throw new Error(
+      "The server returned an unexpected response. Please try again."
+    );
+  }
+
+  if (!response.ok || !(data as { success?: boolean })?.success) {
+    const errorMsg =
+      (data as { error?: { message?: string } })?.error?.message ||
+      "Resume analysis failed. Please try again.";
     throw new Error(errorMsg);
   }
 
-  return data.data as AnalysisReport;
+  return (data as { data: AnalysisReport }).data;
 }
