@@ -119,3 +119,35 @@ export const slideInFromRight: Variants = {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// SCROLL-TRIGGERED ANIMATIONS
+// ═══════════════════════════════════════════════════════════════
+
+export const scrollReveal = {
+  initial: { opacity: 0, y: 40, scale: 0.98 },
+  whileInView: { opacity: 1, y: 0, scale: 1 },
+  viewport: { once: true, margin: "-80px" } as const,
+  transition: { type: "spring" as const, stiffness: 200, damping: 25 },
+};
+
+export const scrollRevealLeft = {
+  initial: { opacity: 0, x: -60 },
+  whileInView: { opacity: 1, x: 0 },
+  viewport: { once: true, margin: "-60px" } as const,
+  transition: { type: "spring" as const, stiffness: 200, damping: 25 },
+};
+
+export const scrollRevealRight = {
+  initial: { opacity: 0, x: 60 },
+  whileInView: { opacity: 1, x: 0 },
+  viewport: { once: true, margin: "-60px" } as const,
+  transition: { type: "spring" as const, stiffness: 200, damping: 25 },
+};
+
+export const scrollRevealScale = {
+  initial: { opacity: 0, scale: 0.9 },
+  whileInView: { opacity: 1, scale: 1 },
+  viewport: { once: true, margin: "-60px" } as const,
+  transition: { type: "spring" as const, stiffness: 200, damping: 25 },
+};
+
+// ═══════════════════════════════════════════════════════════════
