@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { MotionConfig } from "framer-motion";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/lib/theme";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -75,7 +76,9 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider>
-          <PageTransition>{children}</PageTransition>
+          <MotionConfig reducedMotion="user">
+            <PageTransition>{children}</PageTransition>
+          </MotionConfig>
         </ThemeProvider>
       </body>
     </html>
