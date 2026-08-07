@@ -13,6 +13,11 @@ class Settings(BaseSettings):
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     }
 
+    # Per-client-IP rate limit for the analyze endpoint (abuse hardening).
+    # Note: with multiple gunicorn workers each process tracks its own counter.
+    RATE_LIMIT_MAX_REQUESTS: int = 10
+    RATE_LIMIT_WINDOW_SECONDS: int = 60
+
     # Comma-separated list of allowed CORS origins (production)
     CORS_ORIGINS: str = "*"
 

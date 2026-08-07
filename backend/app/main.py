@@ -68,6 +68,7 @@ async def resumeiq_exception_handler(request: Request, exc: ResumeIQException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"success": False, "error": {"code": exc.code, "message": exc.message}},
+        headers=exc.headers,
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)

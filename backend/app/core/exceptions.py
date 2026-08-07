@@ -1,3 +1,5 @@
+from typing import Dict, Optional
+
 from fastapi import HTTPException, status
 
 class ResumeIQException(HTTPException):
@@ -6,12 +8,15 @@ class ResumeIQException(HTTPException):
         code: str,
         message: str,
         status_code: int = status.HTTP_400_BAD_REQUEST,
+        headers: Optional[Dict[str, str]] = None,
     ):
         self.code = code
         self.message = message
+        self.headers = headers
         super().__init__(
             status_code=status_code,
             detail={"success": False, "error": {"code": code, "message": message}},
+            headers=headers,
         )
 
 class InvalidFileTypeError(ResumeIQException):
@@ -52,4 +57,17 @@ class AnalysisFailedError(ResumeIQException):
             code="ANALYSIS_FAILED",
             message=message,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+class RateLimitExceededError(ResumeIQException):
+    def __init__(
+        self,
+        message: str = "Too many requests. Please wait a moment and try again.",
+        retry_after_seconds: int = 60,
+    ):
+        super().__init__(
+            code="RATE_LIMITED",
+            message=message,
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            headers={"Retry-After": str(retry_after_seconds)},
         )

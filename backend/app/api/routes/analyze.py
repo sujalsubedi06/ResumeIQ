@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 
-from fastapi import APIRouter, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 
 from app.core.config import settings
 from app.core.exceptions import (
@@ -10,6 +10,7 @@ from app.core.exceptions import (
     ResumeIQException,
 )
 from app.core.logging import logger
+from app.core.rate_limit import enforce_rate_limit
 from app.schemas.analysis import AnalysisReport
 from app.services.analysis_service import AnalysisService
 from app.services.parser_service import ParserService
@@ -39,6 +40,7 @@ def _safe_filename(filename: str) -> str:
 async def analyze_resume(
     resume: UploadFile = File(..., description="Uploaded resume file (PDF or DOCX)"),
     job_description: Optional[str] = Form(None, description="Optional target job description text"),
+    _rate_limit: None = Depends(enforce_rate_limit),
 ):
     filename = _safe_filename(resume.filename or "resume.pdf")
     file_bytes = await resume.read(MAX_UPLOAD_BYTES + 1)
