@@ -117,6 +117,7 @@ function DropSuccessOverlay({ show }: { show: boolean }) {
 
 export function UploadZone({ onAnalyze, disabled, error, onReset }: UploadZoneProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [jobDescription, setJobDescription] = useState<string>("");
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [showDropSuccess, setShowDropSuccess] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
@@ -166,7 +167,7 @@ export function UploadZone({ onAnalyze, disabled, error, onReset }: UploadZonePr
 
   const handleSubmit = () => {
     if (selectedFile) {
-      onAnalyze(selectedFile);
+      onAnalyze(selectedFile, jobDescription);
     }
   };
 
@@ -393,6 +394,35 @@ export function UploadZone({ onAnalyze, disabled, error, onReset }: UploadZonePr
           <Shield className="w-4 h-4 text-[var(--text-muted)]" />
           <span>Your file is secure and never stored. It is deleted after analysis.</span>
         </motion.div>
+      </motion.div>
+
+      {/* Optional Job Description Input */}
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="space-y-3"
+      >
+        <motion.div variants={fadeUpItem} className="flex items-center justify-between">
+          <h2 className="text-sm font-medium text-[var(--text-primary)]">
+            Job Description <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
+          </h2>
+        </motion.div>
+        <motion.div variants={fadeUpItem} className="relative">
+          <textarea
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value.slice(0, 2000))}
+            placeholder="Paste the job description here for keyword alignment analysis..."
+            rows={4}
+            className="w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-4 pr-16 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--text-muted)] resize-none transition-colors"
+          />
+          <span className="absolute bottom-3 right-4 text-xs text-[var(--text-muted)] font-mono">
+            {jobDescription.length} / 2000
+          </span>
+        </motion.div>
+        <motion.p variants={fadeUpItem} className="text-xs text-[var(--text-muted)]">
+          Adding a job description helps us analyze keyword alignment and improve match accuracy.
+        </motion.p>
       </motion.div>
 
       {/* Action Button */}
