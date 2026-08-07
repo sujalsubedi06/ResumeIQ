@@ -45,6 +45,34 @@ function clickSectionDot(label: string) {
   fireEvent.click(dot);
 }
 
+// Helper: simulate a horizontal touch swipe across an element.
+// Used by the touch-swipe regression tests below to prove that swipes on
+// the scroll container never navigate (the swipe feature was removed).
+function swipeOn(element: HTMLElement, startX: number, endX: number, y = 300) {
+  const touch = (clientX: number) => ({
+    clientX,
+    clientY: y,
+    identifier: 0,
+    target: element,
+  });
+  fireEvent.touchStart(element, {
+    touches: [touch(startX)],
+    changedTouches: [touch(startX)],
+  });
+  const steps = 5;
+  for (let i = 1; i <= steps; i++) {
+    const x = startX + ((endX - startX) * i) / steps;
+    fireEvent.touchMove(element, {
+      touches: [touch(x)],
+      changedTouches: [touch(x)],
+    });
+  }
+  fireEvent.touchEnd(element, {
+    touches: [],
+    changedTouches: [touch(endX)],
+  });
+}
+
 describe("DocsPage", () => {
   it("renders without crashing (no hooks ordering errors)", () => {
     render(<DocsPage />);
@@ -297,6 +325,46 @@ describe("DocsPage", () => {
 
     // Verify FAQ content is fully rendered after round-trip
     expect(screen.getByText(/what file formats are supported/i)).toBeInTheDocument();
+  });
+
+  // ── Touch Swipe Regression Tests ────────────────────────────────
+  // The mobile swipe-to-navigate feature was removed from the docs page.
+  // These tests lock in that behavior: touch swipes on the scroll
+  // container must NEVER change the current section.
+
+  it("does not navigate when swiping left on the scroll container", async () => {
+    render(<DocsPage />);
+    const scrollContainer = screen.getByTestId("docs-scroll-container");
+
+    // Simulate the removed mobile swipe-to-next gesture (leftward swipe)
+    swipeOn(scrollContainer, 350, 50);
+
+    await waitForTransition();
+
+    // Must still be on Overview — Quick Start content must not be shown.
+    // Async query guards against a slow section swap if swipes are ever re-added.
+    expect(
+      await screen.findByText(/resumeiq is a resume analysis platform/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/upload your resume/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText("1 / 8").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("does not navigate when swiping right on the scroll container", async () => {
+    render(<DocsPage />);
+    const scrollContainer = screen.getByTestId("docs-scroll-container");
+
+    // Simulate the removed mobile swipe-to-previous gesture (rightward swipe)
+    swipeOn(scrollContainer, 50, 350);
+
+    await waitForTransition();
+
+    // Must still be on Overview
+    expect(
+      await screen.findByText(/resumeiq is a resume analysis platform/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/upload your resume/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText("1 / 8").length).toBeGreaterThanOrEqual(1);
   });
 
   // ── Responsive Layout Tests ──────────────────────────────────────
