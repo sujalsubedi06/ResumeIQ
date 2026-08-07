@@ -21,10 +21,36 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         # We opt out explicitly and rely on strict parsing instead.
         "X-XSS-Protection": "0",
         "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+        "Cross-Origin-Opener-Policy": "same-origin",
     }
+
+    # FastAPI's interactive docs are real HTML pages that load their CSS/JS
+    # from the jsdelivr CDN and use inline scripts — they need their own, more
+    # permissive CSP (scoped to those exact paths only). The stylesheet link
+    # must be allowed in style-src or Swagger renders unstyled.
+    _SWAGGER_PATHS = ("/docs", "/redoc", f"{settings.API_V1_STR}/openapi.json")
+    _SWAGGER_CSP = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "img-src 'self' data: https://fastapi.tiangolo.com; "
+        "font-src 'self' data: https://cdn.jsdelivr.net; "
+        "connect-src 'self'; "
+        "frame-ancestors 'none'; "
+        "base-uri 'self'; "
+        "form-action 'self'"
+    )
+    # Pure JSON API responses should never render content — deny everything.
+    _API_CSP = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
 
     async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
+        csp = (
+            self._SWAGGER_CSP
+            if request.url.path in self._SWAGGER_PATHS
+            else self._API_CSP
+        )
+        response.headers.setdefault("Content-Security-Policy", csp)
         for header, value in self.SECURITY_HEADERS.items():
             response.headers.setdefault(header, value)
         return response
@@ -78,5 +104,5 @@ async def root():
     return {
         "name": settings.PROJECT_NAME,
         "version": settings.VERSION,
-        "docs": f"{settings.API_V1_STR}/docs",
+        "docs": "/docs",
     }

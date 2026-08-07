@@ -14,6 +14,27 @@ def test_security_headers_present_on_api_responses():
     assert response.headers["x-xss-protection"] == "0"
 
 
+def test_strict_csp_on_json_api_responses():
+    response = client.get("/api/v1/health")
+    csp = response.headers["content-security-policy"]
+    assert "default-src 'none'" in csp
+    assert "frame-ancestors 'none'" in csp
+
+
+def test_swagger_ui_gets_a_permissive_csp():
+    response = client.get("/docs")
+    csp = response.headers["content-security-policy"]
+    assert "default-src 'self'" in csp
+    # The stylesheet + JS bundles load from jsdelivr — both must be allowed
+    assert "https://cdn.jsdelivr.net" in csp
+    assert "style-src" in csp
+
+
+def test_coop_header_present():
+    response = client.get("/api/v1/health")
+    assert response.headers["cross-origin-opener-policy"] == "same-origin"
+
+
 def test_cors_preflight_wildcard_does_not_allow_credentials():
     response = client.options(
         "/api/v1/analyze",
