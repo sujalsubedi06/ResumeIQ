@@ -1,9 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { ThemeProvider } from "@/lib/theme";
 import { Sidebar, MobileHeader, MobileNavBar } from "./Sidebar";
 
 // Mutable pathname so tests can drive active states
 const mockUsePathname = vi.fn(() => "/");
+
+function renderWithTheme(ui: React.ReactElement) {
+  return render(<ThemeProvider>{ui}</ThemeProvider>);
+}
 vi.mock("next/navigation", () => ({
   usePathname: () => mockUsePathname(),
 }));
@@ -79,21 +84,21 @@ describe("MobileNavBar", () => {
 
 describe("Sidebar", () => {
   it("renders the desktop sidebar hidden on mobile (hidden lg:flex)", () => {
-    render(<Sidebar />);
+    renderWithTheme(<Sidebar />);
     const aside = screen.getByRole("complementary");
     expect(aside).toHaveClass("hidden");
     expect(aside).toHaveClass("lg:flex");
   });
 
   it("does not render the mobile overlay when closed", () => {
-    render(<Sidebar mobileOpen={false} />);
+    renderWithTheme(<Sidebar mobileOpen={false} />);
     expect(
       screen.queryByRole("button", { name: "Close menu" })
     ).not.toBeInTheDocument();
   });
 
   it("renders the mobile overlay when open", () => {
-    render(<Sidebar mobileOpen onMobileClose={() => {}} />);
+    renderWithTheme(<Sidebar mobileOpen onMobileClose={() => {}} />);
     expect(
       screen.getByRole("button", { name: "Close menu" })
     ).toBeInTheDocument();
@@ -105,14 +110,14 @@ describe("Sidebar", () => {
 
   it("calls onMobileClose when the overlay close button is clicked", () => {
     const onMobileClose = vi.fn();
-    render(<Sidebar mobileOpen onMobileClose={onMobileClose} />);
+    renderWithTheme(<Sidebar mobileOpen onMobileClose={onMobileClose} />);
     fireEvent.click(screen.getByRole("button", { name: "Close menu" }));
     expect(onMobileClose).toHaveBeenCalledTimes(1);
   });
 
   it("highlights the active link for the current path", () => {
     mockUsePathname.mockReturnValue("/docs");
-    render(<Sidebar />);
+    renderWithTheme(<Sidebar />);
     const docsLink = screen.getByText("Documentation").closest("a")!;
     expect(docsLink).toHaveClass("text-[var(--text-primary)]");
   });

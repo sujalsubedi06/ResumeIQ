@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useState,
   useCallback,
-  useSyncExternalStore,
 } from "react";
 
 type Theme = "dark" | "light";
@@ -17,52 +16,45 @@ interface ThemeContextValue {
   setTheme: (theme: Theme) => void;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({
-  theme: "dark",
-  toggleTheme: () => {},
-  setTheme: () => {},
-});
+const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 // Read the stored preference (or the OS preference) lazily during the initial
-// render rather than syncing it from an effect — avoids the
-// react-hooks/set-state-in-effect anti-pattern. The value only affects the UI
-// after hydration (see useHydrated below), so SSR output stays consistent
-// between server and client.
+// render rather than syncing it from an effect.
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "dark";
-  const stored = localStorage.getItem("resumeiq-theme") as Theme | null;
+
+  let stored: Theme | null = null;
+  try {
+    stored = localStorage.getItem("resumeiq-theme") as Theme | null;
+  } catch {
+    stored = null;
+  }
+
   if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: light)").matches
-    ? "light"
-    : "dark";
-}
 
-// A subscribe function that never fires — the store value only changes once,
-// from the server snapshot (false) to the client snapshot (true) right after
-// hydration. This is the React-recommended way to detect "mounted on client"
-// without calling setState inside an effect.
-const emptySubscribe = () => () => {};
-
-function useHydrated() {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true, // client snapshot
-    () => false // server snapshot
-  );
+  try {
+    return window.matchMedia("(prefers-color-scheme: light)").matches
+      ? "light"
+      : "dark";
+  } catch {
+    return "dark";
+  }
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme);
-  const hydrated = useHydrated();
 
   // Listen for OS theme changes when user hasn't explicitly set a preference
   useEffect(() => {
-    if (!hydrated) return;
+    const mediaQuery = typeof window.matchMedia === "function"
+      ? window.matchMedia("(prefers-color-scheme: light)")
+      : null;
 
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: light)");
+    if (!mediaQuery || typeof mediaQuery.addEventListener !== "function") {
+      return;
+    }
 
     const handleChange = (e: MediaQueryListEvent) => {
-      // Only auto-switch if the user hasn't manually set a preference
       const stored = localStorage.getItem("resumeiq-theme") as Theme | null;
       if (!stored) {
         setThemeState(e.matches ? "light" : "dark");
@@ -71,16 +63,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [hydrated]);
+  }, []);
 
   // Sync <html> data-theme attribute whenever theme changes
   useEffect(() => {
-    if (hydrated) {
-      document.documentElement.setAttribute("data-theme", theme);
-    }
-  }, [theme, hydrated]);
-
-
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
@@ -94,11 +82,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       return next;
     });
   }, []);
-
-  // Prevent flash of wrong theme by not rendering until hydrated
-  if (!hydrated) {
-    return <>{children}</>;
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>

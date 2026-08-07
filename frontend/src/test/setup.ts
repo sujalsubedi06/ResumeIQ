@@ -47,3 +47,55 @@ Object.defineProperty(window, "ResizeObserver", {
   configurable: true,
   value: MockResizeObserver,
 });
+
+// Provide a simple localStorage mock for jsdom tests.
+const mockLocalStorage = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem(key: string) {
+      return key in store ? store[key] : null;
+    },
+    setItem(key: string, value: string) {
+      store[key] = String(value);
+    },
+    removeItem(key: string) {
+      delete store[key];
+    },
+    clear() {
+      store = {};
+    },
+    key(index: number) {
+      return Object.keys(store)[index] ?? null;
+    },
+    get length() {
+      return Object.keys(store).length;
+    },
+  };
+})();
+
+Object.defineProperty(window, "localStorage", {
+  writable: true,
+  configurable: true,
+  value: mockLocalStorage,
+});
+
+Object.defineProperty(globalThis, "localStorage", {
+  writable: true,
+  configurable: true,
+  value: mockLocalStorage,
+});
+
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  configurable: true,
+  value: (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+    addListener: () => {},
+    removeListener: () => {},
+  }) as MediaQueryList,
+});

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
+import { ThemeProvider } from "@/lib/theme";
 import HomePage from "./page";
 
 vi.mock("next/link", () => ({
@@ -10,6 +11,10 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+function renderWithTheme(ui: React.ReactElement) {
+  return render(<ThemeProvider>{ui}</ThemeProvider>);
+}
+
 // GitHubStar is dynamically imported (ssr: false) and fetches stars — mock it
 vi.mock("@/components/ui/GitHubStar", () => ({
   GitHubStar: () => <span data-testid="github-star" />,
@@ -17,7 +22,7 @@ vi.mock("@/components/ui/GitHubStar", () => ({
 
 describe("HomePage mobile navigation", () => {
   it("renders a hamburger toggle that is visible only on mobile", () => {
-    render(<HomePage />);
+    renderWithTheme(<HomePage />);
     const toggle = screen.getByRole("button", { name: "Open menu" });
     expect(toggle).toHaveClass("sm:hidden");
     expect(toggle).toHaveAttribute("aria-expanded", "false");
@@ -26,7 +31,7 @@ describe("HomePage mobile navigation", () => {
   });
 
   it("opens the dropdown menu when the hamburger is clicked", () => {
-    render(<HomePage />);
+    renderWithTheme(<HomePage />);
     const toggle = screen.getByRole("button", { name: "Open menu" });
     fireEvent.click(toggle);
 
@@ -43,7 +48,7 @@ describe("HomePage mobile navigation", () => {
   });
 
   it("closes the menu when a navigation link is clicked", () => {
-    render(<HomePage />);
+    renderWithTheme(<HomePage />);
     const toggle = screen.getByRole("button", { name: "Open menu" });
     fireEvent.click(toggle);
 
@@ -57,7 +62,7 @@ describe("HomePage mobile navigation", () => {
   });
 
   it("closes the menu on Escape", () => {
-    render(<HomePage />);
+    renderWithTheme(<HomePage />);
     const toggle = screen.getByRole("button", { name: "Open menu" });
     fireEvent.click(toggle);
 
@@ -67,7 +72,7 @@ describe("HomePage mobile navigation", () => {
   });
 
   it("closes the menu when clicking outside the nav", () => {
-    render(<HomePage />);
+    renderWithTheme(<HomePage />);
     const toggle = screen.getByRole("button", { name: "Open menu" });
     fireEvent.click(toggle);
 
@@ -77,7 +82,7 @@ describe("HomePage mobile navigation", () => {
   });
 
   it("keeps the menu open when clicking inside the nav", () => {
-    render(<HomePage />);
+    renderWithTheme(<HomePage />);
     const toggle = screen.getByRole("button", { name: "Open menu" });
     fireEvent.click(toggle);
 
@@ -87,7 +92,7 @@ describe("HomePage mobile navigation", () => {
   });
 
   it("hides the GitHub star and Docs link on small screens", async () => {
-    render(<HomePage />);
+    renderWithTheme(<HomePage />);
     // Menu is closed here, so the outer <nav> is the only navigation landmark.
     const nav = screen.getByRole("navigation");
 
