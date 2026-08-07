@@ -299,4 +299,36 @@ describe("DocsPage", () => {
     expect(screen.getByText(/what file formats are supported/i)).toBeInTheDocument();
   });
 
+  // ── Responsive Layout Tests ──────────────────────────────────────
+
+  it("uses dvh-based heights so the layout fits mobile browser chrome", () => {
+    const { container } = render(<DocsPage />);
+    const root = container.firstChild as HTMLElement;
+    expect(root).toHaveClass("min-h-dvh");
+  });
+
+  it("clears the fixed mobile header with top padding on mobile only", () => {
+    const { container } = render(<DocsPage />);
+    const main = container.querySelector("main")!;
+    // pt-14 (56px) matches the fixed h-14 MobileHeader; lg:pt-0 on desktop
+    expect(main).toHaveClass("pt-14");
+    expect(main).toHaveClass("lg:pt-0");
+  });
+
+  it("reserves space for the fixed mobile bottom tab bar", () => {
+    const { container } = render(<DocsPage />);
+    const main = container.querySelector("main")!;
+    // pb clears the fixed MobileNavBar plus the iPhone home indicator
+    expect(main).toHaveClass("pb-[calc(4rem+env(safe-area-inset-bottom))]");
+    expect(main).toHaveClass("lg:pb-0");
+  });
+
+  it("makes the content area the scrollable overflow container", () => {
+    render(<DocsPage />);
+    const scrollContainer = screen.getByTestId("docs-scroll-container");
+    expect(scrollContainer).toHaveClass("overflow-y-auto");
+    expect(scrollContainer).toHaveClass("overscroll-contain");
+    expect(scrollContainer).toHaveClass("flex-1");
+  });
+
 });
