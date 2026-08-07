@@ -49,8 +49,9 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 border-r border-[var(--border)] bg-[var(--bg-primary)] p-6 flex-col justify-between min-h-screen select-none shrink-0 transition-[colors,background-color,border-color]">
+      {/* Desktop Sidebar — caps to the viewport height and scrolls internally so
+          the bottom controls (theme toggle, status) stay reachable on short screens */}
+      <aside className="hidden lg:flex w-64 border-r border-[var(--border)] bg-[var(--bg-primary)] p-6 flex-col justify-between h-dvh sticky top-0 overflow-y-auto select-none shrink-0 transition-[colors,background-color,border-color]">
         <SidebarContent pathname={pathname} />
       </aside>
 
@@ -61,7 +62,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             className="absolute inset-0 bg-black/60"
             onClick={onMobileClose}
           />
-          <aside className="relative w-72 bg-[var(--bg-primary)] border-r border-[var(--border)] p-6 flex flex-col justify-between min-h-screen z-10 transition-[colors,background-color,border-color]">
+          <aside className="relative w-72 bg-[var(--bg-primary)] border-r border-[var(--border)] p-6 flex flex-col justify-between h-dvh overflow-y-auto z-10 transition-[colors,background-color,border-color]">
             <div className="flex justify-end mb-4">
               <button
                 onClick={onMobileClose}
