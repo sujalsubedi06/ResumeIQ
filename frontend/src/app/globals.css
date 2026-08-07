@@ -148,4 +148,19 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /*
+    Skip rendering of offscreen content for faster scrolling & lower main-thread
+    cost (great for long, below-the-fold sections). `auto` remembers the real
+    size after first paint so scroll position doesn't jump.
+  */
+  .cv-auto {
+    content-visibility: auto;
+    /* Plain fallback for browsers that don't support the `auto` keyword yet */
+    contain-intrinsic-size: 1px 500px;
+    contain-intrinsic-size: auto 1px 500px;
+  }
 }
+
+/*
+  
