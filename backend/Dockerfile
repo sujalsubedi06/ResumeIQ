@@ -2,15 +2,15 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies required for spaCy and PyMuPDF
+# Install system dependencies required for PyMuPDF builds (wheels usually
+# cover it, but keep gcc as a fallback for exotic platforms)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && \
-    python -m spacy download en_core_web_sm
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
