@@ -73,13 +73,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [hydrated]);
 
+  // Sync <html> data-theme attribute whenever theme changes
+  useEffect(() => {
+    if (hydrated) {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+  }, [theme, hydrated]);
+
+
+
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
+    localStorage.setItem("resumeiq-theme", newTheme);
   }, []);
 
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => {
       const next = prev === "dark" ? "light" : "dark";
+      localStorage.setItem("resumeiq-theme", next);
       return next;
     });
   }, []);
