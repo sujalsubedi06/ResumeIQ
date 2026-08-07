@@ -16,16 +16,22 @@ async def analyze_resume(
     filename = resume.filename or "resume.pdf"
     file_bytes = await resume.read()
 
-    # 1. Parse Document (in-memory, no persistence)
-    parsed_doc = ParserService.parse_resume(file_bytes=file_bytes, filename=filename)
+    try:
+        # 1. Parse Document (in-memory, no persistence)
+        parsed_doc = ParserService.parse_resume(file_bytes=file_bytes, filename=filename)
 
-    # 2. Run Analysis Engine
-    report: AnalysisReport = AnalysisService.analyze_document(
-        parsed_doc=parsed_doc,
-        job_description=job_description,
-    )
+        # 2. Run Analysis Engine
+        report: AnalysisReport = AnalysisService.analyze_document(
+            parsed_doc=parsed_doc,
+            job_description=job_description,
+        )
 
-    return {
-        "success": True,
-        "data": report.model_dump(),
-    }
+        return {
+            "success": True,
+            "data": report.model_dump(),
+        }
+    except ResumeIQException:
+        raise
+    except Exception as e:
+        logger.error(f"Analysis failed for '{filename}': {str(e)}")
+        raise AnalysisFailedError(f"Failed to analyze resume '{filename}': {str(e)}")
