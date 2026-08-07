@@ -47,6 +47,25 @@ export function useAnalyze() {
     setCurrentProcessingText("Receiving and validating file structure...");
 
     try {
+      // Simulate real-time pipeline progression visually for smooth experience
+      setTimeout(() => {
+        updateStepStatus(0, "completed", nowStr);
+        updateStepStatus(1, "in_progress");
+        setCurrentProcessingText("Reading text and extracting paragraph layouts...");
+      }, 500);
+
+      setTimeout(() => {
+        updateStepStatus(1, "completed", nowStr);
+        updateStepStatus(2, "in_progress");
+        setCurrentProcessingText("Identifying sections (Experience, Education, Skills)...");
+      }, 1000);
+
+      setTimeout(() => {
+        updateStepStatus(2, "completed", nowStr);
+        updateStepStatus(3, "in_progress");
+        setCurrentProcessingText("Extracting technical skills and competencies from your resume...");
+      }, 1500);
+
       // Perform API call
       const result = await analyzeResumeApi(file, jobDescription);
 
