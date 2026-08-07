@@ -26,7 +26,9 @@ export async function analyzeResumeApi(
       signal: controller.signal,
     });
   } catch (err) {
-    if (err instanceof DOMException && err.name === "AbortError") {
+    // Some browsers/webviews reject aborted fetches with a plain Error whose
+    // name is "AbortError" rather than a DOMException — detect by name only.
+    if ((err as { name?: string } | null)?.name === "AbortError") {
       throw new Error("Analysis timed out. Please try again.");
     }
     throw new Error(
