@@ -37,5 +37,6 @@ class DOCXParser(BaseParser):
 
             return ParsedDocument(text=full_text, metadata=metadata)
         except Exception as e:
-            logger.error(f"DOCX parsing error for file {filename}: {str(e)}")
-            raise ParseFailedError(f"Failed to parse DOCX document '{filename}': {str(e)}")
+            logger.error(f"DOCX parsing error for file {filename}: {e}", exc_info=True)
+            # Log the internal detail above; never echo parser internals to clients.
+            raise ParseFailedError(f"Failed to parse DOCX document '{filename}'.")
