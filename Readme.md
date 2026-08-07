@@ -22,7 +22,8 @@ Most resume tools either act as AI chat assistants or rewrite content for you, w
 - Job description comparison — matching skills, missing keywords, requirement coverage
 - Improvement recommendations throughout the analysis
 - Analysis progress indicators
-- Downloadable analysis results
+
+> Note: Analysis reports are displayed on screen only — nothing is ever stored or downloadable server-side.
 
 ## How It Works
 
@@ -43,6 +44,15 @@ Improvement Recommendations
 ## Privacy
 
 Uploaded resumes are processed only for the duration of the analysis and are not retained as part of normal operation. No account is required to use the application.
+
+## Security
+
+- Uploads are size-capped **while being read** (10 MB), so oversized payloads are rejected without ever fully loading into memory.
+- Only PDF and DOCX are accepted; file extension, MIME type, and content are all validated before parsing.
+- Files are parsed strictly in-memory — nothing is written to disk.
+- Internal parser/exception details are logged server-side and never echoed back to clients.
+- API responses ship with hardening headers (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, strict `Referrer-Policy`, `Permissions-Policy`), and CORS credentials are disabled whenever origins are open.
+- Dependencies are pinned against known vulnerabilities (e.g. `python-multipart >= 0.0.22`).
 
 ## Limitations
 
