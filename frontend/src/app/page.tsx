@@ -531,6 +531,59 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Privacy Section */}
+      <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] transition-colors">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-2xl mx-auto text-center space-y-6"
+          >
+            <motion.div
+              whileHover={{ scale: 1.15, rotate: 12 }}
+              transition={springBouncy}
+              className="inline-flex items-center justify-center p-3 bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl transition-colors"
+            >
+              <Shield className="w-6 h-6 text-[var(--text-secondary)]" />
+            </motion.div>
+            <div className="space-y-3">
+              <h2 className="text-2xl font-semibold tracking-tight">
+                Your data stays private
+              </h2>
+              <p className="text-[var(--text-muted)] leading-relaxed">
+                ResumeIQ processes your resume entirely in memory. Files are never
+                stored, uploaded to external services, or retained after analysis.
+                Upload, analyze, and leave — no traces left behind.
+              </p>
+            </div>
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-sm text-[var(--text-muted)]"
+            >
+              {[
+                "In-memory processing",
+                "No database",
+                "Instant deletion",
+              ].map((text) => (
+                <motion.div
+                  key={text}
+                  variants={fadeUpItem}
+                  className="flex items-center gap-2"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>{text}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       
       {/* Footer */}
       <Footer />
