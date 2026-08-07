@@ -2,7 +2,7 @@ services:
   - type: web
     name: resumeiq-api
     env: docker
-    repo: https://github.com/sujalsubedi06/ResumeIQ
+    repo: https://github.com/karlowsmorris"/ResumeIQ
     branch: master
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend

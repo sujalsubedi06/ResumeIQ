@@ -4,7 +4,7 @@ from cachetools import TTLCache
 from app.core.logging import logger
 
 
-GITHUB_OWNER = "sujalsubedi06"
+GITHUB_OWNER = "karlowsmorris"
 GITHUB_REPOSITORY = "ResumeIQ"
 
 # Cache GitHub stars for 4 hours
