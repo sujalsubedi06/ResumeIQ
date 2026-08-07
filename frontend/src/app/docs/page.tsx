@@ -595,6 +595,7 @@ function SectionApi() {
                   { code: "EMPTY_FILE", meaning: "Uploaded file has no content" },
                   { code: "PARSE_FAILED", meaning: "Document extraction failed" },
                   { code: "ANALYSIS_FAILED", meaning: "Analysis engine error" },
+                  { code: "RATE_LIMITED", meaning: "Too many requests — wait and retry" },
                   { code: "INTERNAL_ERROR", meaning: "Unexpected server error" },
                 ].map((err) => (
                   <tr key={err.code} className="hover:bg-[var(--bg-surface)] transition-colors">
