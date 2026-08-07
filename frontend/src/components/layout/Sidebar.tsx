@@ -164,3 +164,22 @@ function SidebarContent({
   );
 }
 
+export function MobileHeader({
+  onMenuOpen,
+}: {
+  onMenuOpen: () => void;
+}) {
+  return (
+    <header className="lg:hidden fixed top-0 left-0 right-0 flex items-center justify-between px-4 h-14 border-b border-[var(--border)] bg-[var(--bg-primary)]/90 backdrop-blur-md z-40 transition-[colors,background-color,border-color]">
+      <Logo size="sm" />
+      <button
+        onClick={onMenuOpen}
+        className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-lg hover:bg-[var(--bg-hover)]"
+        aria-label="Open menu"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+    </header>
+  );
+}
+
