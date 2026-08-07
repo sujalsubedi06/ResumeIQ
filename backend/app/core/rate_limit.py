@@ -22,8 +22,10 @@ class RateLimiter:
     """Fixed-window counter per key (e.g. client IP)."""
 
     def __init__(self, max_requests: int, window_seconds: int) -> None:
-        self.max_requests = max_requests
-        self.window_seconds = window_seconds
+        # Guard against misconfigured env values (e.g. RATE_LIMIT_MAX_REQUESTS=0
+        # would otherwise reject every request).
+        self.max_requests = max(1, max_requests)
+        self.window_seconds = max(1, window_seconds)
         # key -> (window_start_timestamp, request_count)
         self._buckets: Dict[str, Tuple[float, int]] = {}
         self._lock = threading.Lock()
@@ -79,7 +81,15 @@ rate_limiter = RateLimiter(
 
 
 def _client_ip(request: Request) -> str:
-    """Best-effort client IP, honoring the first X-Forwarded-For hop (Render proxy)."""
+    """Best-effort client IP, honoring the first X-Forwarded-For hop.
+
+    The first hop is only trustworthy because Render's reverse proxy sets
+    (and prepends the real client IP to) X-Forwarded-For. Do NOT replace this
+    with request.client.host — behind the proxy that is the proxy's own IP,
+    which would lump every user into a single rate-limit bucket. If the API
+    were ever reachable directly, the header could be spoofed and rotated to
+    bypass the limiter; a trusted-proxy setup is part of the threat model.
+    """
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
         first = forwarded.split(",")[0].strip()
