@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: resumeiq-api
+    env: docker
+    repo: https://github.com/sujalsubedi06/ResumeIQ
+    branch: master
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: GUNICORN_WORKERS
+        value: 2
+      - key: CORS_ORIGINS
+        value: https://resumeiq.sujalsubedi.name.np
+      - key: PYTHONUNBUFFERED
+        value: "1"
