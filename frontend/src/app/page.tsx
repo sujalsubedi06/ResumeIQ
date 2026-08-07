@@ -284,7 +284,7 @@ export default function HomePage() {
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             animate={orbFloat(0)}
-            className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full opacity-[0.04]"
+            className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full opacity-[0.04] will-change-transform"
             style={{
               background: "radial-gradient(circle, #F2F2F0 0%, transparent 70%)",
               y: orbY1,
@@ -292,7 +292,7 @@ export default function HomePage() {
           />
           <motion.div
             animate={orbFloat(2)}
-            className="absolute top-20 right-0 w-[400px] h-[400px] rounded-full opacity-[0.03]"
+            className="absolute top-20 right-0 w-[400px] h-[400px] rounded-full opacity-[0.03] will-change-transform"
             style={{
               background: "radial-gradient(circle, #3b82f6 0%, transparent 70%)",
               y: orbY2,
@@ -300,7 +300,7 @@ export default function HomePage() {
           />
           <motion.div
             animate={orbFloat(4)}
-            className="absolute -bottom-20 left-1/3 w-[350px] h-[350px] rounded-full opacity-[0.025]"
+            className="absolute -bottom-20 left-1/3 w-[350px] h-[350px] rounded-full opacity-[0.025] will-change-transform"
             style={{
               background: "radial-gradient(circle, #22c55e 0%, transparent 70%)",
             }}
@@ -339,7 +339,7 @@ export default function HomePage() {
                 Free • No account required • No data stored
               </motion.div>
 
-              <h1 className="text-4xl lg:text-6xl font-semibold tracking-tight leading-[1.1] text-balance">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.1] text-balance">
                 <AnimatedText text="Analyze your resume" />
                 <br />
                 <span className="text-[var(--text-muted)]">
@@ -397,7 +397,7 @@ export default function HomePage() {
       </section>
 
       {/* How It Works */}
-      <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] transition-colors">
+      <section className="cv-auto border-t border-[var(--border)] bg-[var(--bg-surface)] transition-colors">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -471,7 +471,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Grid */}
-      <section className="border-t border-[var(--border)] transition-colors">
+      <section className="cv-auto border-t border-[var(--border)] transition-colors">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -532,7 +532,7 @@ export default function HomePage() {
       </section>
 
       {/* Privacy Section */}
-      <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] transition-colors">
+      <section className="cv-auto border-t border-[var(--border)] bg-[var(--bg-surface)] transition-colors">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -585,7 +585,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-[var(--border)] transition-colors">
+      <section className="cv-auto border-t border-[var(--border)] transition-colors">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 py-20 text-center space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
