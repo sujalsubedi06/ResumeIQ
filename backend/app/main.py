@@ -27,6 +27,14 @@ if cors_origins == ["*"]:
 else:
     logger.info(f"CORS: Restricted to {cors_origins}")
 
+# Custom Exception Handler
+@app.exception_handler(ResumeIQException)
+async def resumeiq_exception_handler(request: Request, exc: ResumeIQException):
+    logger.warning(f"ResumeIQ Exception [{exc.code}]: {exc.message}")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"success": False, "error": {"code": exc.code, "message": exc.message}},
+    )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
