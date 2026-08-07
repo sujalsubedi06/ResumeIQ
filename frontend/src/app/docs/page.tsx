@@ -182,8 +182,9 @@ function CodeBlock({ code, language = "plaintext" }: { code: string; language?: 
           )}
         </motion.button>
       </div>
-      <pre className="bg-[var(--code-bg)] border border-[var(--border)] rounded-lg pt-10 pb-4 px-4 overflow-x-auto">
-        <code className="text-sm text-[var(--code-text)] font-mono leading-relaxed whitespace-pre">{code}</code>
+      <pre className="bg-[var(--code-bg)] border border-[var(--border)] rounded-lg pt-10 pb-4 px-3 sm:px-4 overflow-x-auto">
+        {/* text-xs on mobile keeps long curl/json lines readable without heavy horizontal scrolling */}
+        <code className="text-xs sm:text-sm text-[var(--code-text)] font-mono leading-relaxed whitespace-pre">{code}</code>
       </pre>
     </motion.div>
   );
@@ -559,9 +560,9 @@ function SectionApi() {
               transition={{ delay: i * 0.15, ease: docEase }}
               className="space-y-3"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 <Badge variant={api.method === "POST" ? "success" : "info"}>{api.method}</Badge>
-                <code className="text-sm font-mono text-[var(--text-primary)]">{api.endpoint}</code>
+                <code className="text-sm font-mono text-[var(--text-primary)] break-all min-w-0">{api.endpoint}</code>
               </div>
               <p className="text-sm text-[var(--text-secondary)]">{api.description}</p>
               <div className="space-y-2">
@@ -972,6 +973,28 @@ export default function DocsPage() {
                 </div>
               </div>
 
+              {/* Mobile-only compact progress row — gives phone users a clear
+                  position indicator since the slider and dots are sm+ only */}
+              <div
+                data-testid="docs-mobile-progress"
+                className="sm:hidden flex items-center gap-3"
+              >
+                <span className="text-[10px] font-mono text-[var(--text-muted-strong)] font-semibold shrink-0">
+                  {currentIndex + 1} / {totalSections}
+                </span>
+                <div className="relative flex-1 h-1.5 bg-[var(--bg-elevated)] rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-[var(--text-primary)]/40"
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.4, ease: docEase }}
+                  />
+                </div>
+                <span className="text-[10px] text-[var(--text-muted)] truncate shrink-0 max-w-[7rem]">
+                  {currentSection.label}
+                </span>
+              </div>
+
               {/* Full-width Previous / Next buttons */}
               <div className="flex items-center gap-3">
                 {/* Previous */}
@@ -982,7 +1005,8 @@ export default function DocsPage() {
                       onClick={goPrev}
                       whileTap={{ scale: 0.97 }}
                       transition={springSnappy}
-                      className="w-full group flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] hover:bg-[var(--bg-elevated)] transition-all duration-200 shadow-sm"
+                      aria-label={`Previous section: ${navSections[currentIndex - 1].label}`}
+                      className="w-full group flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] hover:bg-[var(--bg-elevated)] transition-all duration-200 shadow-sm"
                     >
                       <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform shrink-0" />
                       <div className="flex-1 text-left">
@@ -991,7 +1015,8 @@ export default function DocsPage() {
                       </div>
                     </motion.button>
                   ) : (
-                    <div className="w-full px-5 py-3 rounded-xl border border-transparent bg-transparent opacity-40" />
+                    // Hidden on mobile so the remaining Next button goes full-width
+                    <div className="hidden sm:block w-full px-5 py-3 rounded-xl border border-transparent bg-transparent opacity-40" />
                   )}
                 </div>
 
@@ -1009,7 +1034,8 @@ export default function DocsPage() {
                       onClick={goNext}
                       whileTap={{ scale: 0.97 }}
                       transition={springSnappy}
-                      className="w-full group flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] hover:bg-[var(--bg-elevated)] transition-all duration-200 shadow-sm"
+                      aria-label={`Next section: ${navSections[currentIndex + 1].label}`}
+                      className="w-full group flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] hover:bg-[var(--bg-elevated)] transition-all duration-200 shadow-sm"
                     >
                       <div className="flex-1 text-right">
                         <div className="text-[10px] text-[var(--text-muted)] font-normal">Next</div>
@@ -1018,7 +1044,8 @@ export default function DocsPage() {
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform shrink-0" />
                     </motion.button>
                   ) : (
-                    <div className="w-full px-5 py-3 rounded-xl border border-transparent bg-transparent opacity-40" />
+                    // Hidden on mobile so the remaining Previous button goes full-width
+                    <div className="hidden sm:block w-full px-5 py-3 rounded-xl border border-transparent bg-transparent opacity-40" />
                   )}
                 </div>
               </div>
