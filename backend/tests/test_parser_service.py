@@ -51,3 +51,13 @@ def test_parser_service_accepts_ambiguous_mime_type():
         docx_bytes, "jane_resume.docx", content_type="application/octet-stream"
     )
     assert parsed.metadata.fileType == "docx"
+
+
+def test_parser_service_accepts_parameterized_mime_type():
+    # Content types can carry parameters (e.g. "application/pdf; charset=binary")
+    # and must not be rejected on the raw header value.
+    pdf_bytes = create_sample_pdf_bytes("Parameterized MIME type test")
+    parsed = ParserService.parse_resume(
+        pdf_bytes, "resume.pdf", content_type="application/pdf; charset=binary"
+    )
+    assert parsed.metadata.fileType == "pdf"

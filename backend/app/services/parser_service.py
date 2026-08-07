@@ -32,8 +32,11 @@ class ParserService:
 
         # Defense in depth: reject obviously mismatched content types while
         # allowing ambiguous ones, since the extension drives the parser.
-        if content_type is not None and content_type.lower() not in _AMBIGUOUS_MIME_TYPES:
-            if content_type.lower() not in settings.ALLOWED_MIME_TYPES:
+        if content_type is not None:
+            # Strip parameters (e.g. "application/pdf; charset=binary") so a
+            # valid file sent with extra header params is never rejected.
+            base_type = content_type.split(";")[0].strip().lower()
+            if base_type not in _AMBIGUOUS_MIME_TYPES and base_type not in settings.ALLOWED_MIME_TYPES:
                 raise InvalidFileTypeError(
                     f"Unsupported content type '{content_type}'. Only PDF and DOCX files are allowed."
                 )
