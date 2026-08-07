@@ -14,6 +14,76 @@ interface ThemeToggleProps {
   className?: string;
 }
 
+// Sun and moon glyphs. Both are always rendered and crossfaded through CSS
+// opacity, so the toggle is never in an "empty / hidden icon" state — even
+// mid-switch or before hydration. Colors come from a CSS variable that follows
+// data-theme, so the correct glyph color is painted on first paint too.
+function SunIcon({
+  size = 18,
+  strokeWidth = 2,
+  className = "",
+}: {
+  size?: number;
+  strokeWidth?: number;
+  className?: string;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`pointer-events-none ${className}`}
+      aria-hidden="true"
+      style={{ color: "var(--toggle-icon)" }}
+    >
+      <circle cx="12" cy="12" r="5" />
+      <g stroke="currentColor">
+        <line x1="12" y1="1" x2="12" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="23" />
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="1" y1="12" x2="3" y2="12" />
+        <line x1="21" y1="12" x2="23" y2="12" />
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      </g>
+    </svg>
+  );
+}
+
+function MoonIcon({
+  size = 18,
+  strokeWidth = 2,
+  className = "",
+}: {
+  size?: number;
+  strokeWidth?: number;
+  className?: string;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`pointer-events-none ${className}`}
+      aria-hidden="true"
+      style={{ color: "var(--toggle-icon)" }}
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
 export function ThemeToggle({ compact = false, iconOnly = false, className = "" }: ThemeToggleProps) {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
@@ -29,43 +99,18 @@ export function ThemeToggle({ compact = false, iconOnly = false, className = "" 
         className={`relative flex items-center justify-center w-9 h-9 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors ${className}`}
         aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
       >
-        {/* Sun / Moon icon */}
-        <motion.svg
-          key={isDark ? "moon" : "sun"}
-          initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
-          animate={{ rotate: 0, opacity: 1, scale: 1 }}
-          exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          {isDark ? (
-            <>
-              <circle cx="12" cy="12" r="5" />
-              <g stroke="currentColor">
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </g>
-            </>
-          ) : (
-            <>
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </>
-          )}
-        </motion.svg>
+        <SunIcon
+          size={18}
+          className={`absolute inset-0 m-auto transition-opacity duration-200 ${
+            isDark ? "opacity-100" : "opacity-0"
+          }`}
+        />
+        <MoonIcon
+          size={18}
+          className={`absolute inset-0 m-auto transition-opacity duration-200 ${
+            isDark ? "opacity-0" : "opacity-100"
+          }`}
+        />
       </motion.button>
     );
   }
@@ -108,7 +153,7 @@ export function ThemeToggle({ compact = false, iconOnly = false, className = "" 
       >
         <motion.div
           transition={springSnappy}
-          className={`absolute top-[3px] left-[3px] rounded-full shadow-sm flex items-center justify-center ${
+          className={`absolute top-[3px] left-[3px] rounded-full border border-[var(--border)] shadow-sm flex items-center justify-center ${
             compact ? "w-[14px] h-[14px]" : "w-[18px] h-[18px]"
           }`}
           animate={{
@@ -118,43 +163,21 @@ export function ThemeToggle({ compact = false, iconOnly = false, className = "" 
             backgroundColor: "var(--toggle-active)",
           }}
         >
-          {/* Sun / moon icon inside the knob, no scale transforms */}
-          <motion.svg
-            key={isDark ? "knob-moon" : "knob-sun"}
-            initial={{ rotate: -90, opacity: 0 }}
-            animate={{ rotate: 0, opacity: 1 }}
-            exit={{ rotate: 90, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            xmlns="http://www.w3.org/2000/svg"
-            width={compact ? 10 : 12}
-            height={compact ? 10 : 12}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="pointer-events-none"
-            style={{
-              color: isDark ? '#09090b' : '#f2f2f0',
-            }}
-          >
-            {isDark ? (
-              <>
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </>
-            ) : (
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            )}
-          </motion.svg>
+          {/* Sun / moon icons, always rendered — crossfade instead of remounting */}
+          <SunIcon
+            size={compact ? 10 : 12}
+            strokeWidth={1.5}
+            className={`absolute inset-0 m-auto transition-opacity duration-200 ${
+              isDark ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          <MoonIcon
+            size={compact ? 10 : 12}
+            strokeWidth={1.5}
+            className={`absolute inset-0 m-auto transition-opacity duration-200 ${
+              isDark ? "opacity-0" : "opacity-100"
+            }`}
+          />
         </motion.div>
       </div>
 
