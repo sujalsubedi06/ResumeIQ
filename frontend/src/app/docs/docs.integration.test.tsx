@@ -161,4 +161,142 @@ describe("DocsPage", () => {
     expect(screen.getByText("PDF & DOCX")).toBeInTheDocument();
   });
 
+  // ── Keyboard Navigation Tests ──────────────────────────────────
+
+  it("navigates forward with ArrowRight key", async () => {
+    render(<DocsPage />);
+
+    // Start on Overview (index 0)
+    expect(screen.getAllByText("Overview").length).toBeGreaterThanOrEqual(1);
+
+    // Press ArrowRight to go to Quick Start (index 1)
+    await waitForTransition();
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    expect(
+      await screen.findByText(/upload your resume/i)
+    ).toBeInTheDocument();
+  });
+
+  it("navigates backward with ArrowLeft key", async () => {
+    render(<DocsPage />);
+
+    // Navigate to Pipeline (index 2) first
+    clickSectionDot("Analysis Pipeline");
+    expect(
+      await screen.findByText(/every resume goes through a multi-stage pipeline/i)
+    ).toBeInTheDocument();
+
+    await waitForTransition();
+
+    // Press ArrowLeft to go back to Quick Start (index 1)
+    fireEvent.keyDown(window, { key: "ArrowLeft" });
+    expect(
+      await screen.findByText(/upload your resume/i)
+    ).toBeInTheDocument();
+  });
+
+  it("navigates forward with ArrowDown key", async () => {
+    render(<DocsPage />);
+
+    // Press ArrowDown to go from Overview to Quick Start
+    await waitForTransition();
+    fireEvent.keyDown(window, { key: "ArrowDown" });
+    expect(
+      await screen.findByText(/upload your resume/i)
+    ).toBeInTheDocument();
+  });
+
+  it("navigates backward with ArrowUp key", async () => {
+    render(<DocsPage />);
+
+    // Navigate to Pipeline (index 2)
+    clickSectionDot("Analysis Pipeline");
+    expect(
+      await screen.findByText(/every resume goes through a multi-stage pipeline/i)
+    ).toBeInTheDocument();
+
+    await waitForTransition();
+
+    // Press ArrowUp to go back to Quick Start
+    fireEvent.keyDown(window, { key: "ArrowUp" });
+    expect(
+      await screen.findByText(/upload your resume/i)
+    ).toBeInTheDocument();
+  });
+
+  it("repeated ArrowRight navigates through multiple sections", async () => {
+    render(<DocsPage />);
+
+    // Press ArrowRight 3 times to go from Overview (0) → Quick Start (1) → Pipeline (2) → Categories (3)
+    await waitForTransition();
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    await waitForTransition();
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    await waitForTransition();
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+
+    // Should be on Categories section (index 3)
+    expect(
+      await screen.findByText(/each category is independently scored/i)
+    ).toBeInTheDocument();
+  });
+
+  it("does not navigate past the last section with ArrowRight", async () => {
+    render(<DocsPage />);
+
+    // Navigate to FAQ (last section, index 7)
+    clickSectionDot("FAQ");
+    expect(await screen.findByText(/what file formats are supported/i)).toBeInTheDocument();
+
+    await waitForTransition();
+
+    // Press ArrowRight — should stay on FAQ
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    await waitForTransition();
+    expect(screen.getByText(/what file formats are supported/i)).toBeInTheDocument();
+  });
+
+  it("does not navigate before the first section with ArrowLeft", async () => {
+    render(<DocsPage />);
+
+    // Already on Overview (index 0)
+    await waitForTransition();
+
+    // Press ArrowLeft — should stay on Overview
+    fireEvent.keyDown(window, { key: "ArrowLeft" });
+    await waitForTransition();
+    expect(
+      screen.getAllByText("Overview").length
+    ).toBeGreaterThanOrEqual(1);
+  });
+
+  it("navigates from FAQ to Overview and back to FAQ", async () => {
+    render(<DocsPage />);
+
+    // Forward to FAQ
+    clickSectionDot("FAQ");
+    expect(await screen.findByText(/what file formats are supported/i)).toBeInTheDocument();
+
+    // Wait for debounce
+    await waitForTransition();
+
+    // Back to Overview
+    clickSectionDot("Overview");
+    expect(
+      await screen.findByText(/resumeiq is a resume analysis platform/i)
+    ).toBeInTheDocument();
+
+    // Wait for debounce
+    await waitForTransition();
+
+    // Forward to FAQ again — hooks must remain correctly ordered
+    clickSectionDot("FAQ");
+    expect(
+      await screen.findByText(/what file formats are supported/i)
+    ).toBeInTheDocument();
+
+    // Verify FAQ content is fully rendered after round-trip
+    expect(screen.getByText(/what file formats are supported/i)).toBeInTheDocument();
+  });
+
 });
