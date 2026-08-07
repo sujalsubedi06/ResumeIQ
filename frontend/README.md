@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ResumeIQ — Frontend
+
+Next.js 16 (App Router) frontend for **ResumeIQ**, a free resume analysis
+platform that scores resumes against modern ATS compatibility standards —
+without storing any of your data.
+
+## Tech Stack
+
+- **Next.js 16** (App Router, React 19) + **TypeScript**
+- **Tailwind CSS v4** with CSS-variable theming (dark/light, no flash on load)
+- **framer-motion** for animations (respects `prefers-reduced-motion`)
+- **lucide-react** icons
+- **Vitest + Testing Library** for unit/integration tests
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The frontend talks to the FastAPI backend at `/api/v1`. Configure the backend
+URL with an env var (the app falls back to `http://localhost:8000/api/v1`):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_API_URL=https://your-backend.example.com/api/v1
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+| Script            | Description                          |
+| ----------------- | ------------------------------------ |
+| `npm run dev`     | Start the dev server                 |
+| `npm run build`   | Production build                     |
+| `npm run start`   | Serve the production build           |
+| `npm run lint`    | Run ESLint                           |
+| `npm test`        | Run the Vitest suite (once)          |
+| `npm run test:watch` | Run the Vitest suite in watch mode |
 
-To learn more about Next.js, take a look at the following resources:
+## Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `/` — Landing page with feature highlights
+- `/analyze` — Upload a resume (PDF/DOCX), get an ATS report
+- `/docs` — Product documentation (slide-based sections)
+- `/about` — About the project
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/          # Next.js App Router pages & global styles
+├── components/   # Layout (Sidebar, Footer) & UI primitives
+├── features/
+│   └── analyze/  # Upload, pipeline, report & API client
+└── lib/          # Theme, animations, shared API base URL, utils
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `../backend/README.md` for the API documentation.
