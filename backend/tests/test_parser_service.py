@@ -36,3 +36,18 @@ def test_parser_service_file_too_large():
     with pytest.raises(FileTooLargeError) as exc_info:
         ParserService.parse_resume(large_bytes, "large.pdf")
     assert "exceeds maximum allowed limit" in str(exc_info.value).lower()
+
+
+def test_parser_service_rejects_disallowed_mime_type():
+    with pytest.raises(InvalidFileTypeError) as exc_info:
+        ParserService.parse_resume(b"Some text content", "resume.pdf", content_type="image/png")
+    assert "unsupported content type" in str(exc_info.value).lower()
+
+
+def test_parser_service_accepts_ambiguous_mime_type():
+    # Some clients send octet-stream for DOCX; the extension remains authoritative.
+    docx_bytes = create_sample_docx_bytes("Jane Doe Resume\nExperience: Lead Developer")
+    parsed = ParserService.parse_resume(
+        docx_bytes, "jane_resume.docx", content_type="application/octet-stream"
+    )
+    assert parsed.metadata.fileType == "docx"
