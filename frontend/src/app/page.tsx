@@ -584,7 +584,37 @@ export default function HomePage() {
         </div>
       </section>
 
-      
+      {/* CTA */}
+      <section className="border-t border-[var(--border)] transition-colors">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-20 text-center space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="space-y-6"
+          >
+            <h2 className="text-3xl font-semibold tracking-tight">
+              Ready to improve your resume?
+            </h2>
+            <p className="text-[var(--text-muted)] max-w-md mx-auto">
+              Get a detailed analysis in seconds. No sign-up required.
+            </p>
+            <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }} transition={springSnappy}>
+              <Link href="/analyze">
+                <Button size="lg">
+                  <Sparkles className="w-4 h-4" />
+                  Analyze Your Resume
+                  <MoveRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+
+
       {/* Footer */}
       <Footer />
     </div>
